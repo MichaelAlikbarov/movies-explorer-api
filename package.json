@@ -1,0 +1,48 @@
+{
+  "name": "movies-explorer-api",
+  "version": "1.0.0",
+  "description": "backend project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichaelAlikbarov/movies-explorer-api.git"
+  },
+  "keywords": [
+    "js",
+    "express",
+    "mongo"
+  ],
+  "author": "AlMichael",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MichaelAlikbarov/movies-explorer-api/issues"
+  },
+  "homepage": "https://github.com/MichaelAlikbarov/movies-explorer-api#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "celebrate": "^15.0.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.8.0",
+    "express-winston": "^4.2.0",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.1",
+    "mongoose": "^7.4.1",
+    "validator": "^13.9.0",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.25.3",
+    "nodemon": "^3.0.1"
+  }
+}
