@@ -29,7 +29,9 @@ const updateUser = (req, res, next) => {
           new BadRequestError(`${Object.values(err.errors)
             .map(() => err.message).join(', ')}`),
         );
-      } next(err);
+      } if (err.code === 11000) {
+        return next(new ConflictError('Пользователь с таким email уже существует'));
+      } return next(err);
     });
 };
 
@@ -47,9 +49,9 @@ const createUser = (req, res, next) => {
       })
         .then((userNew) => res.status(201).send(userNew)))
         .catch((err) => {
-          if (err.name === 11000) {
+          if (err.code === 11000) {
             return next(new ConflictError('Пользователь уже существует'));
-          } next(err);
+          } return next(err);
         });
     })
     .catch(next);
@@ -63,7 +65,7 @@ const login = (req, res, next) => {
       if (!user) {
         return new UnauthorizedError('Такого пользователя не существует');
       }
-      bcrypt.compare(password, user.password, (err, isPasswordMatch) => {
+      return bcrypt.compare(password, user.password, (err, isPasswordMatch) => {
         if (!isPasswordMatch) {
           return next(new UnauthorizedError('Неправильный логин или пароль'));
         }

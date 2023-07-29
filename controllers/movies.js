@@ -40,13 +40,16 @@ const createMovie = (req, res, next) => {
           new BadRequestError(`${Object.values(err.errors)
             .map(() => err.message).join(', ')}`),
         );
-      } next(err);
+      } return next(err);
     });
 };
 
-const getMovies = (req, res, next) => Movie.find({})
-  .then((movies) => res.status(200).send(movies))
-  .catch(next);
+const getMovies = (req, res, next) => {
+  const owner = req.user;
+  Movie.find({ owner })
+    .then((movies) => res.status(200).send(movies))
+    .catch(next);
+};
 
 const deleteMovieId = (req, res, next) => {
   Movie.findById(
@@ -54,7 +57,7 @@ const deleteMovieId = (req, res, next) => {
   )
     .orFail(new NotFoundError('Error: not found'))
     .then((movie) => {
-      if (req.user === movie.owner) {
+      if (req.user === movie.owner.valueOf()) {
         return movie.deleteOne();
       }
       throw new ForbiddenError('Нельзя удалить чужой фильм');
@@ -66,7 +69,7 @@ const deleteMovieId = (req, res, next) => {
       }
       if (err.name === 'CastError') {
         return next(new BadRequestError('Error: bad request'));
-      } next(err);
+      } return next(err);
     });
 };
 

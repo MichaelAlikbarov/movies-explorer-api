@@ -3,14 +3,23 @@ const { URL_REGEX } = require('../utils/constatnt');
 
 const validationCreateMovie = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().pattern(URL_REGEX),
+    country: Joi.string().required(),
+    director: Joi.string().required(),
+    duration: Joi.number().required(),
+    year: Joi.string().required(),
+    description: Joi.string().required(),
+    image: Joi.string().required().pattern(URL_REGEX),
+    trailerLink: Joi.string().required().pattern(URL_REGEX),
+    thumbnail: Joi.string().required().pattern(URL_REGEX),
+    movieId: Joi.number().required(),
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
   }),
 });
 
 const validationDeleteMovieId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().required().length(24),
+    movieId: Joi.string().hex().required().length(24),
   }),
 });
 
@@ -25,7 +34,7 @@ const validationCreateUser = celebrate({
 const validationUpdateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    email: Joi.string().required().email,
+    email: Joi.string().required().email(),
   }),
 });
 
