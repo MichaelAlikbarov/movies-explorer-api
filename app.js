@@ -26,8 +26,6 @@ mongoose.connect(NODE_ENV === 'production' ? dburl = DB_URL : dburl = 'mongodb:/
   console.log(`connected to ${dburl}`);
 });
 
-// console.log(mongoose.Error);
-
 app.use(requestLogger);
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));

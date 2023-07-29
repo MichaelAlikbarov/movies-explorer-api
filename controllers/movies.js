@@ -1,9 +1,7 @@
 const Movie = require('../models/movie');
 const BadRequestError = require('../errors/bad-request-error');
-// const ConflictError = require('../errors/conflict-error');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
-// const movie = require('../models/movie');
 
 const createMovie = (req, res, next) => {
   const {
@@ -19,7 +17,7 @@ const createMovie = (req, res, next) => {
     nameRU,
     nameEN,
   } = req.body;
-  const owner = req.users;
+  const owner = req.user;
 
   Movie.create({
     country,
@@ -56,7 +54,7 @@ const deleteMovieId = (req, res, next) => {
   )
     .orFail(new NotFoundError('Error: not found'))
     .then((movie) => {
-      if (req.users === movie.owner) {
+      if (req.user === movie.owner) {
         return movie.deleteOne();
       }
       throw new ForbiddenError('Нельзя удалить чужой фильм');

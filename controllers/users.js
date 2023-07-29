@@ -4,13 +4,17 @@ const { generateToken } = require('../utils/jwt');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
+const NotFoundError = require('../errors/not-found-error');
 
 const getUsersMe = (req, res, next) => {
-  const _id = req.user;
-  User.findById(_id)
+  const userId = req.user;
+  User.findById(userId)
     .then((user) => {
+      if (!user) {
+        return new NotFoundError('Пользователь не найден');
+      }
       const { name, email } = user;
-      return res.status(200).send(name, email);
+      return res.status(200).send({ name, email });
     })
     .catch(next);
 };
@@ -18,7 +22,7 @@ const getUsersMe = (req, res, next) => {
 const updateUser = (req, res, next) => {
   const { name, email } = req.body;
   User.findByIdAndUpdate(req.user, { name, email }, { new: true, runValidators: true })
-    .then((user) => res.send({ user }))
+    .then((user) => res.status(201).send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(
@@ -33,14 +37,22 @@ const createUser = (req, res, next) => {
   const {
     name, email, password,
   } = req.body;
-  bcrypt.hash(password, 10, (err, hash) => User.create({
-    name, email, password: hash,
-  }).then((userNew) => res.status(201).send(userNew))
-    .catch(() => {
-      if (err.name === 11000) {
-        return next(new ConflictError('Пользователь уже существует'));
-      } next(err);
-    }));
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        throw new ConflictError('Пользователь уже существует');
+      }
+      bcrypt.hash(password, 10, (err, hash) => User.create({
+        name, email, password: hash,
+      })
+        .then((userNew) => res.status(201).send(userNew)))
+        .catch((err) => {
+          if (err.name === 11000) {
+            return next(new ConflictError('Пользователь уже существует'));
+          } next(err);
+        });
+    })
+    .catch(next);
 };
 
 const login = (req, res, next) => {
